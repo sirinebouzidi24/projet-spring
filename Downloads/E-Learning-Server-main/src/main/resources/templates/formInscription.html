@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nouvelle inscription</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">📝 Inscription Étudiant - Cours</h2>
+
+    <form th:action="@{/inscription/save}" method="post"
+      class="card p-4 shadow">
+
+    <!-- Étudiant -->
+    <div class="mb-3">
+        <label class="form-label">Étudiant</label>
+        <select class="form-select" name="etudiantId" required>
+            <option value="">-- Choisir un étudiant --</option>
+            <option th:each="e : ${etudiants}"
+                    th:value="${e.matricule}"
+                    th:text="${e.matricule + ' - ' + e.nom + ' ' + e.prenom}">
+            </option>
+        </select>
+    </div>
+
+    <!-- Cours -->
+    <div class="mb-3">
+        <label class="form-label">Cours</label>
+        <select class="form-select" name="coursId" required>
+            <option value="">-- Choisir un cours --</option>
+            <option th:each="c : ${cours}"
+                    th:value="${c.id}"
+                    th:text="${c.code + ' - ' + c.titre}">
+            </option>
+        </select>
+    </div>
+
+    <!-- Actions -->
+    <div class="text-center">
+        <button type="submit" class="btn btn-primary">📌 Inscrire</button>
+        <a th:href="@{/inscription/index}" class="btn btn-secondary">↩️ Retour</a>
+    </div>
+
+</form>
+</div>
+
+</body>
+</html>

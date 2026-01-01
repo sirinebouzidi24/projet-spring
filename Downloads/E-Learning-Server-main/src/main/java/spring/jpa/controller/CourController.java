@@ -18,11 +18,12 @@ public class CourController {
     @Autowired
     private CourService coursService;
 
-    // Liste des cours
+    // Afficher tous les cours
     @GetMapping("/index")
     public String index(Model model) {
-        model.addAttribute("cours", coursService.getAllCours());
-        return "cours";
+        List<Cours> cours = coursService.getAllCours();
+        model.addAttribute("cours", cours);
+        return "cours"; // cours.html
     }
 
     // Formulaire ajout
@@ -34,37 +35,36 @@ public class CourController {
 
     // Sauvegarde
     @PostMapping("/save")
-    public String save(@Valid Cours cours, BindingResult bindingResult) {
+    public String save(@Valid @ModelAttribute("cours") Cours cours, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "formCour";
         }
-        coursService.createCours(cours);
-        return "redirect:/cours/index";
-    }
-
-    // Edition
-    @GetMapping("/edit")
-    public String edit(@RequestParam Long code, Model model) {
-        Cours cours = coursService.getCoursByCode(code)
-                .orElseThrow(() -> new RuntimeException("Cours introuvable"));
-        model.addAttribute("cours", cours);
-        return "editCours";
-    }
-
-    // Mise à jour
-    @PostMapping("/update")
-    public String update(@Valid Cours cours, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "editCours";
+        
+        // Si l'id existe, c'est une mise à jour, sinon c'est une création
+        if (cours.getId() != null) {
+            coursService.updateCours(cours.getId(), cours);
+        } else {
+            coursService.createCours(cours);
         }
-        coursService.createCours(cours);
+        
         return "redirect:/cours/index";
     }
+
+    // Edition cours existant
+    @GetMapping("/edit")
+    public String edit(@RequestParam("id") Long id, Model model) {
+        Cours cours = coursService.getCoursByID(id)
+                .orElseThrow(() -> new IllegalArgumentException("Cours introuvable avec l'id : " + id));
+        model.addAttribute("cours", cours);
+        return "formCour";
+    }
+
+
 
     // Suppression
     @GetMapping("/delete")
-    public String delete(@RequestParam Long code) {
-        coursService.deleteCours(code);
+    public String delete(@RequestParam("id") Long id) {
+        coursService.deleteCours(id);
         return "redirect:/cours/index";
     }
 }

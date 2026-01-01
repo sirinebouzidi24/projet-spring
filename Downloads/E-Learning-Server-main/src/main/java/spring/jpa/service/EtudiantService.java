@@ -18,14 +18,20 @@ public class EtudiantService {
     public List<Etudiant> getAll() {
         return repository.findAll();
     }
-
+  
     public Optional<Etudiant> getById(String id) {
         return repository.findById(id);
     }
 
+    public List<Etudiant> findAllById(List<String> ids) {
+        return repository.findAllById(ids);
+    }
+
     public Etudiant save(Etudiant etudiant) {
         if (etudiant.getDateInscription() == null) {
-            etudiant.setDateInscription(Date.valueOf(java.time.LocalDate.now()));
+            etudiant.setDateInscription(
+                Date.valueOf(java.time.LocalDate.now())
+            );
         }
         return repository.save(etudiant);
     }
@@ -34,4 +40,6 @@ public class EtudiantService {
         repository.deleteById(id);
     }
 }
+
+
 
